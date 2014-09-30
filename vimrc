@@ -124,6 +124,54 @@ nnoremap <leader>Ec :let sshm=&shm \| set shm+=A \| call MyEditConfig(resolve($M
 " nnoremap <leader>em :call MyEditConfig(ProjectRootGuess().'/Makefile')<cr>
 
 
+" CR and BS mapping: call/setup various plugins manually. {{{
+let g:endwise_no_mappings = 1  " NOTE: must be unset instead of 0
+let g:cursorcross_no_map_CR = 1
+let g:cursorcross_no_map_BS = 1
+let g:delimitMate_expand_cr = 0
+let g:SuperTabCrMapping = 0  " Skip SuperTab CR map setup (skipped anyway for expr mapping)
+
+let g:cursorcross_mappings = 0  " No generic mappings for cursorcross.
+
+" Force delimitMate mapping (gets skipped if mapped already).
+fun! My_CR_map()
+  " "<CR>" via delimitMateCR
+  if len(maparg('<Plug>delimitMateCR', 'i'))
+    let r = "\<Plug>delimitMateCR"
+  else
+    let r = "\<CR>"
+  endif
+  if len(maparg('<Plug>CursorCrossCR', 'i'))
+    " requires vim 704
+    let r .= "\<Plug>CursorCrossCR"
+  endif
+  if len(maparg('<Plug>DiscretionaryEnd', 'i'))
+    let r .= "\<Plug>DiscretionaryEnd"
+  endif
+  return r
+endfun
+imap <expr> <CR> My_CR_map()
+
+fun! My_BS_map()
+  " "<BS>" via delimitMateBS
+  if len(maparg('<Plug>delimitMateBS', 'i'))
+    let r = "\<Plug>delimitMateBS"
+  else
+    let r = "\<BS>"
+  endif
+  if len(maparg('<Plug>CursorCrossBS', 'i'))
+    " requires vim 704
+    let r .= "\<Plug>CursorCrossBS"
+  endif
+  return r
+endfun
+imap <expr> <BS> My_BS_map()
+
+" For endwise.
+imap <C-X><CR> <CR><Plug>AlwaysEnd
+" }}}
+
+
 " Do not display "Pattern not found" messages during YouCompleteMe completion.
 " Patch: https://groups.google.com/forum/#!topic/vim_dev/WeBBjkXE8H8
 if 1 && exists(':try')
